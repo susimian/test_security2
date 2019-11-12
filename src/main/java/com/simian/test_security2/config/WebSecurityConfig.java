@@ -1,18 +1,20 @@
 package com.simian.test_security2.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simian.test_security2.component.CustomAccessDecisionManager;
+import com.simian.test_security2.component.CustomFilterInvocationSecurityMetadataSource;
 import com.simian.test_security2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.servlet.ServletException;
@@ -31,13 +33,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
+    /*@Bean
     RoleHierarchy roleHierarchy(){
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         String hierarchy = "ROLE_admin > ROLE_user";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
+    }*/
+    @Bean
+    CustomFilterInvocationSecurityMetadataSource cfisms(){
+        return new CustomFilterInvocationSecurityMetadataSource();
+    }
+    @Bean
+    CustomAccessDecisionManager cadm(){
+        return new CustomAccessDecisionManager();
     }
 
     @Override
@@ -48,16 +57,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/admin/**").hasRole("admin")
+                /*.antMatchers("/admin/**").hasRole("admin")
                 .antMatchers("/user/**").hasRole("user")
-                .anyRequest().authenticated()
+                .anyRequest().authenticated()*/
+                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                    @Override
+                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
+                        o.setSecurityMetadataSource(cfisms());
+                        o.setAccessDecisionManager(cadm());
+                        return o;
+                    }
+                })
                 .and()
                 .formLogin()
                 .loginProcessingUrl("/login")
                 .successHandler(new AuthenticationSuccessHandler() {
                     @Override
                     public void onAuthenticationSuccess(HttpServletRequest request,
-                        HttpServletResponse response, Authentication authentication)
+                                                        HttpServletResponse response, Authentication authentication)
                         throws IOException, ServletException {
 
                         Object principal = authentication.getPrincipal();
@@ -76,6 +93,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .csrf().disable();
-
     }
 }
