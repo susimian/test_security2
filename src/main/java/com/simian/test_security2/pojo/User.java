@@ -21,14 +21,14 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String userName;
     @JsonIgnore
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
     @Override

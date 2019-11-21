@@ -1,5 +1,7 @@
 package com.simian.test_security2.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.simian.test_security2.pojo.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,13 +13,24 @@ import java.util.Map;
 @RestController
 @RequestMapping("/login")
 public class LoginController {
+    // 私钥
+    private static final String SECRET = "security";
+
     @RequestMapping("/success")
     public Map<String, Object> success(){
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Map<String, Object> map = new HashMap<>();
-        map.put("status", 200);
-        map.put("msg", principal);
-        return map;
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Algorithm algorithm = Algorithm.HMAC256(SECRET);
+        String token = JWT.create()
+                .withClaim("username", user.getUsername())
+                .withClaim("userId", user.getId())
+                .sign(algorithm);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("token", token);
+        resultMap.put("userId", user.getId());
+        resultMap.put("userName", user.getUsername());
+
+        return resultMap;
     }
 
     @RequestMapping("/failure")

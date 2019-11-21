@@ -27,15 +27,15 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public User login(User user){
+    /*public User login(User user){
         User dataUser = userDao.findByUserName(user.getUsername());
         if (dataUser.getPassword().equals(user.getPassword())){
             return dataUser;
         }
         return user;
-    }
+    }*/
 
-    public User getById(Long id){
+    public User getById(Integer id){
         return userDao.findById(id).get();
     }
 
