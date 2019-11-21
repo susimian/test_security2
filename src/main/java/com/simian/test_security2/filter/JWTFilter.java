@@ -38,7 +38,7 @@ public class JWTFilter extends OncePerRequestFilter {
         if (JWTUtil.verifyToken(jwtToken)){
             Integer userId = JWTUtil.getUserId(jwtToken);
 
-            if (redisService.get(userId).equals(jwtToken)){
+            if (redisService.get(userId.toString()).equals(jwtToken)){
                 User user = userDao.findById(userId).get();
                 Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
                 // 构建用户认证token

@@ -3,6 +3,8 @@ package com.simian.test_security2.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.simian.test_security2.pojo.User;
+import com.simian.test_security2.service.RedisService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +17,9 @@ import java.util.Map;
 public class LoginController {
     // 私钥
     private static final String SECRET = "security";
+
+    @Autowired
+    RedisService redisService;
 
     @RequestMapping("/success")
     public Map<String, Object> success(){
@@ -29,6 +34,12 @@ public class LoginController {
         resultMap.put("token", token);
         resultMap.put("userId", user.getId());
         resultMap.put("userName", user.getUsername());
+
+        //
+        /*ValueOperations<String, String> ops1 = stringRedisTemplate.opsForValue();
+        ops1.set(user.getId().toString(), token);*/
+
+        redisService.set(user.getId().toString(), token);
 
         return resultMap;
     }
