@@ -29,6 +29,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     AuthenticationAccessDeniedHandler authenticationAccessDeniedHandler;
     @Autowired
     JWTFilter jwtAuthenticationFilter;
+
+    @Autowired
+    CustomLogoutHandler customLogoutHandler;
+    @Autowired
+    CustomLogoutSuccessHandler customLogoutSuccessHandler;
+
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -89,7 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
 
-                .addLogoutHandler(new CustomLogoutHandler()).logoutSuccessHandler(new CustomLogoutSuccessHandler())
+                .addLogoutHandler(customLogoutHandler).logoutSuccessHandler(customLogoutSuccessHandler)
                 .and()
                 .csrf().disable()
                 .exceptionHandling().accessDeniedHandler(authenticationAccessDeniedHandler);

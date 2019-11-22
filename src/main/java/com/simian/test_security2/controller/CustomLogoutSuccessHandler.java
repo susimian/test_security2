@@ -1,7 +1,6 @@
 package com.simian.test_security2.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.simian.test_security2.pojo.User;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -18,8 +17,8 @@ import java.util.HashMap;
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
     public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-        User user = (User) authentication.getPrincipal();
-        responseJsonWriter(httpServletResponse, user.getUsername()+"退出成功");
+        //User user = (User) authentication.getPrincipal();
+        responseJsonWriter(httpServletResponse, "退出成功");
     }
 
     private static void responseJsonWriter(HttpServletResponse response, String result) throws IOException {

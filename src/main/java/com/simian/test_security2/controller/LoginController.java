@@ -36,7 +36,7 @@ public class LoginController {
         resultMap.put("userName", user.getUsername());
 
         System.out.println("token: "+token);
-        redisService.set(user.getId().toString(), token, 40L);
+        redisService.set(user.getId().toString(), token, 60L);
 
         return resultMap;
     }
