@@ -35,11 +35,8 @@ public class LoginController {
         resultMap.put("userId", user.getId());
         resultMap.put("userName", user.getUsername());
 
-        //
-        /*ValueOperations<String, String> ops1 = stringRedisTemplate.opsForValue();
-        ops1.set(user.getId().toString(), token);*/
-
-        redisService.set(user.getId().toString(), token);
+        System.out.println("token: "+token);
+        redisService.set(user.getId().toString(), token, 40L);
 
         return resultMap;
     }
