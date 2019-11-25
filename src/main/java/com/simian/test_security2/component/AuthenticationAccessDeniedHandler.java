@@ -22,7 +22,7 @@ public class AuthenticationAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(200);
         Map<String, Object> map = new HashMap<>();
         map.put("status", 200);
-        map.put("msg", "错误");
+        map.put("msg", "信息错误");
         ObjectMapper om = new ObjectMapper();
         out.write(om.writeValueAsString(map));
         out.flush();

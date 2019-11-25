@@ -3,6 +3,7 @@ package com.simian.test_security2.config;
 import com.simian.test_security2.component.AuthenticationAccessDeniedHandler;
 import com.simian.test_security2.component.CustomAccessDecisionManager;
 import com.simian.test_security2.component.CustomFilterInvocationSecurityMetadataSource;
+import com.simian.test_security2.component.SimpleAuthenticationEntryPoint;
 import com.simian.test_security2.controller.CustomLogoutHandler;
 import com.simian.test_security2.controller.CustomLogoutSuccessHandler;
 import com.simian.test_security2.filter.JWTFilter;
@@ -63,6 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/login.html");
+        web.ignoring().antMatchers("/register");
     }
 
     @Override
@@ -98,9 +100,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addLogoutHandler(customLogoutHandler).logoutSuccessHandler(customLogoutSuccessHandler)
                 .and()
                 .csrf().disable()
-                .exceptionHandling().accessDeniedHandler(authenticationAccessDeniedHandler);
+                .exceptionHandling().accessDeniedHandler(authenticationAccessDeniedHandler)
+                .authenticationEntryPoint(new SimpleAuthenticationEntryPoint());
 
         //以下这句就可以控制单个用户只能创建一个session，也就只能在服务器登录一次
-        http.sessionManagement().maximumSessions(1).expiredUrl("/login");
+        //http.sessionManagement().maximumSessions(1).expiredUrl("/login");
     }
 }

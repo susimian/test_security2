@@ -28,6 +28,9 @@ public class JWTFilter extends OncePerRequestFilter {
     RedisService redisService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+
+        //private AuthenticationEntryPoint authenticationEntryPoint = new SimpleAuthenticationE
+
         // 如果已经通过认证
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
             chain.doFilter(request, response);
